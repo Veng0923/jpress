@@ -273,7 +273,10 @@ public class _ContentController extends JBaseCRUDController<Content> {
 			}
 			templateHtml = templateHtml.substring(0, templateHtml.lastIndexOf("_")) + ".html";
 		}
-		
+		if(moduleName.equals("filemanager")){
+			setAttr("include","_edit_include_filemanager.html");
+			return;
+		}
 		setAttr("include", "_edit_include.html");
 	}
 

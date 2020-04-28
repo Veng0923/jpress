@@ -1,10 +1,32 @@
 <#include "../_inc/_layout.html"/> 
 <#macro script>
+$('#fine-uploader-gallery').fineUploader({
+  template: 'qq-template-gallery',
+  validation:{
+    allowedExtensions: ['pdf', 'doc', 'docx', 'ppt','pptx'],
+  },
+  multiple:false,
+  request: {
+      endpoint: '${CPATH}/admin/attachment/doUpload'
+  },
+  thumbnails: {
+      placeholders: {
+          waitingPath: '${CPATH}/static/plugins/fine-uploader/placeholders/waiting-generic.png',
+          notAvailablePath: '${CPATH}/static/plugins/fine-uploader/placeholders/not_available-generic.png'
+      }
+  },
+  callbacks: {
+    onComplete: function(id, name, response) {
+      $('#title').val(name);
+      $("#link_to").val(response.src);
+      $("#slug_text").text(response.src);
+    }
+ }
+});
 var data={
     url:'',
     alt:''
 };
-
 function initTinymce(){
 	tinymce.init({
         selector: '#textarea',
@@ -80,7 +102,7 @@ function save(){
  function doSubmit(){
  	$("#form").ajaxSubmit({
 			type : "post", 
-			dataType : "json", 
+			<!-- dataType : "json",  -->
 			success : function(data) { 
 				if(data.errorCode == 0){
 					$("#content_id").attr("value",data.data);
@@ -89,7 +111,7 @@ function save(){
 					toastr.error(data.message,'操作失败');
 				}
 			},
-			error : function() {
+			error : function(e) {
 				alert("信息提交错误");
 			}
 	});
@@ -160,7 +182,7 @@ $(document).ready(function(){
      
      $('#titleurl').on('save', function(e, params) {
     	 $('#content_slug').attr('value',params.newValue);
-	 });
+   });
 });
 </#macro> 
 <#macro script_import>
@@ -169,11 +191,13 @@ $(document).ready(function(){
 <script src="${CPATH}/static/plugins/tag/jquery.tag-editor.min.js"></script>
 <script src="${CPATH}/static/plugins/editable/bootstrap-editable.min.js"></script>
 <script src="${CPATH}/static/simplemde/simplemde.min.js"></script>
+<script src="${CPATH}/static/plugins/fine-uploader/jquery.fine-uploader.js"></script>
 </#macro>
 <#macro css_import>
 <link rel="stylesheet" href="${CPATH}/static/plugins/tag/jquery.tag-editor.css">
 <link rel="stylesheet" href="${CPATH}/static/plugins/editable/bootstrap-editable.css">
 <link rel="stylesheet" href="${CPATH}/static/simplemde/simplemde.min.css">
+<link href="${CPATH}/static/plugins/fine-uploader/fine-uploader-new.css" rel="stylesheet">
 </#macro>
 <#macro css>
 .editable-input {
@@ -191,6 +215,8 @@ $(document).ready(function(){
     border-radius: 3px;
 }
 </#macro>
+
+
 <@layout active_id=p child_active_id=c>
 <#include include/>
 </@layout>
